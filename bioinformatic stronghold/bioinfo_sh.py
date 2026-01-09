@@ -86,10 +86,88 @@ def reverse_complement_dna(fname):
 # RABBIT AND RECURRENCE RELATIONS
 # recurrance relation: refer to justin's recurrence relation notes
 """
-Reverse
+Calculate Number of Rabbit Pairs Using Recurrence Relations
+Using dynamic programming, calculate the fibonacci numbers as specified by its
+recurrance relation (Fn=F_[n-1]+F_[n-2] with F_1 = F_2 = 1)
+:param fname: file containing two positive integers
+    :n: <=40 represents the number of months/generations of wascally rabbits
+    :k: <=5 represents the litter size (pair) of each preproducing rabbit pair
+:returns: total number of rabbit pairs after n months
 """
+# assuming that rabbits live forever -> base model to analyze growth
+def wascally_wabbits(fname):
+    with open(fname, "r") as file: 
+        data = file.read().split()
+        
+    months = int(data[0])       # n
+    litter_size = int(data[1])  # k
+    return wabbit_reccurence(months, litter_size)
+
+# it takes 2 months for the wabbits to mature before they reproduce
+def wabbit_reccurence(n, k):
+    # F_1 = F_2 = 1
+    if n == 1 or n == 2: 
+        return 1
+    elif n <= 0: 
+        return 0
+    else: 
+        # Fn=F_[n-1]+F_[n-2] 
+        # given a month, # of mature wabbit pairs = total # of wabbit pairs the month prior
+        # so Fn=F_[n-1]+k(F_[n-2]) is the revised equation to account for diff litter sizes 
+        return wabbit_reccurence(n-1, k) + k*wabbit_reccurence(n-2, k)
+    
+
+# COMPUTING GC CONTENT
+"""
+GC Content of DNA
+Determine the 
+:param fname:
+:returns: 
+"""
+def gc_content(fname): 
+    dna_dict = {}
+    
+    # incorrect bc it assumes that dna in fasta format
+    # with open(fname, "r") as file:
+    #     for id, dna_str in zip(file, file): 
+    #         id = id.strip().replace(">", "")
+    #         dna = dna_str.strip().upper()
+    #         # calculate gc content
+    #         gc_count = dna.count("C") + dna.count("G")
+    #         gc_percent = (gc_count/len(dna)) * 100
+    #         dna_dict[id] = gc_percent
+    
+    # corrected: takes all lines following the dna label till the next label
+    with open(fname, "r") as file: 
+        fasta_id = None
+        dna = ""
+        
+        for line in file:
+            if line.startswith(">"): 
+                # if there is a dna sequence already being read for
+                if fasta_id is not None:
+                    gc_count = dna.count("C") + dna.count("G")
+                    gc_percent = (gc_count/len(dna)) * 100
+                    dna_dict[fasta_id] = gc_percent
+                # get the id without ">"
+                fasta_id = line.strip()[1:]
+                dna = ""
+            else:
+                dna = dna + line.strip().upper()
+        
+        # save the last dna sequence data
+        gc_count = dna.count("C") + dna.count("G")
+        gc_percent = (gc_count/len(dna)) * 100
+        dna_dict[fasta_id] = gc_percent
+    
+    # determine the key value pair of the max gc contnet  
+    max_id = max(dna_dict, key=dna_dict.get)
+    max_gc = dna_dict[max_id]
+    print(f"{max_id}\n{max_gc:.6f}")
 
 if __name__ == "__main__":
     print(count_dna("rosalind_dna.txt"))
     print(transcribe_to_mrna("rosalind_rna.txt"))
     print(reverse_complement_dna("rosalind_revc.txt"))
+    print(wascally_wabbits("rosalind_fib.txt"))
+    gc_content("rosalind_gc.txt")
