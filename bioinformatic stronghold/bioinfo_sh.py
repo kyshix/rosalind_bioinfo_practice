@@ -273,4 +273,6 @@ if __name__ == "__main__":
     
     # write protein translation of mrna into a file
     protein = translate_to_protein("rosalind_prot.txt")
-    open("protein_result.txt", "w").write(protein)
+    with open("protein_result.txt", "w") as file: 
+        file.write(protein)
+    
