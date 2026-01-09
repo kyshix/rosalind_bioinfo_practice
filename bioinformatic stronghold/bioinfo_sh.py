@@ -184,6 +184,34 @@ def pt_mutations(fname):
     # assume that the two sequences are of the same length
     return sum(1 for a, b in zip(dna_seqs[0], dna_seqs[1]) if a != b)
 
+# MENDEL'S FIRST LAW
+"""
+:param fname: file containing three positive integers (k, m, n) which represents a
+population containung k+m+n organisms
+    - k: # of individuals w/ homozygous dominant alleles
+    - m: # of individuals w/ heterozygous alleles
+    - n: # of individuals w/ homozygous recessive alleles
+:returns: probability that two randomly selected mates will produce offspring with a 
+dom allele (dom phenotype)
+"""
+def mendels_first_law(fname):
+    with open(fname, "r") as file:
+        k, m, n = map(float, file.read().strip().split())
+    pop = k + m + n
+    
+    # calculate the probability of offspring with recessive phenotype (aa allele)
+    # aa x aa = 1; Aa x aa = 0.50; Aa x Aa = 0.25
+    all_rec = 4 * n * (n-1)         # aa x aa: 4 alleles * 1st parent * 2nd parent
+    het_rec_homo = 4 * m * n
+    all_het = m * (m - 1)
+    rec_pheno_alleles = all_rec + het_rec_homo + all_het
+    # choose alleles (2 parents w/ 2 alleles per parenet) -> total combo of alleles
+    tot_allele_combos = 4 * pop * (pop - 1)
+    rec_prob = rec_pheno_alleles/tot_allele_combos
+    
+    # calculates the probability of offspring with dominant phenotype
+    return 1 - rec_prob
+
 if __name__ == "__main__":
     print(count_dna("rosalind_dna.txt"))
     print(transcribe_to_mrna("rosalind_rna.txt"))
@@ -191,3 +219,4 @@ if __name__ == "__main__":
     print(wascally_wabbits("rosalind_fib.txt"))
     gc_content("rosalind_gc.txt")
     print(pt_mutations("rosalind_hamm.txt"))
+    print(mendels_first_law("rosalind_iprb.txt"))
