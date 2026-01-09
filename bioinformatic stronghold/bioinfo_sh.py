@@ -120,9 +120,13 @@ def wabbit_reccurence(n, k):
 # COMPUTING GC CONTENT
 """
 GC Content of DNA
-Determine the 
-:param fname:
-:returns: 
+Determine the Max GC Conent DNA Sequence 
+GC content can be used to determine the identity of the organism the DNA is from and
+gives insight to related specimens
+:param fname: file containing the dna in FASTA format
+:returns: maximum GC DNA sequence -> formatted as
+    - DNA sequence id without ">"
+    - GC content percentage (0.0001 absolute error)
 """
 def gc_content(fname): 
     dna_dict = {}
@@ -165,9 +169,25 @@ def gc_content(fname):
     max_gc = dna_dict[max_id]
     print(f"{max_id}\n{max_gc:.6f}")
 
+# COUNTING POINT MUTATIONS
+"""
+Count Point Mutations
+Point mutations is a consequence of evolution (mitosis, meiosis, or generally any form
+of DNA replication that may be caused by external disturbances) in which one a base is
+replaced with another (transversion and transitions only in this case?? based on rosalind)
+:param fname: contains two DNA sequences 
+:returns: number of point mutations that occurred
+"""
+def pt_mutations(fname): 
+    with open(fname, "r") as file: 
+        dna_seqs = file.read().splitlines()
+    # assume that the two sequences are of the same length
+    return sum(1 for a, b in zip(dna_seqs[0], dna_seqs[1]) if a != b)
+
 if __name__ == "__main__":
     print(count_dna("rosalind_dna.txt"))
     print(transcribe_to_mrna("rosalind_rna.txt"))
     print(reverse_complement_dna("rosalind_revc.txt"))
     print(wascally_wabbits("rosalind_fib.txt"))
     gc_content("rosalind_gc.txt")
+    print(pt_mutations("rosalind_hamm.txt"))
