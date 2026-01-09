@@ -212,6 +212,56 @@ def mendels_first_law(fname):
     # calculates the probability of offspring with dominant phenotype
     return 1 - rec_prob
 
+
+# TRANSLATING RNA INTO PROTEIN
+"""
+Translating RNA into Protein
+:param fname:
+:returns: 
+"""
+def translate_to_protein(fname): 
+    with open(fname, "r") as file: 
+        mrna = file.read().strip().upper()
+    
+    # translation dictionary to convert rna codon to amino acid (20)
+    rna_codon_mapping = {
+        "GCU" : "A", "GCC" : "A", "GCA" : "A", "GCG" : "A",
+        "UGU" : "C", "UGC" : "C",
+        "GAU" : "D", "GAC" : "D",
+        "GAA" : "E", "GAG" : "E",
+        "UUU" : "F", "UUC" : "F",
+        "GGU" : "G", "GGC" : "G", "GGA" : "G", "GGG" : "G",
+        "CAU" : "H", "CAC" : "H",
+        "AUU" : "I", "AUC" : "I", "AUA" : "I",
+        "AAA" : "K", "AAG" : "K",
+        "UUA" : "L", "UUG" : "L", "CUU" : "L", "CUC" : "L", "CUA" : "L", "CUG" : "L", 
+        "AUG" : "M", 
+        "AAU" : "N", "AAC" : "N",
+        "CCU" : "P", "CCC" : "P", "CCA" : "P", "CCG" : "P", "CCU" : "P",
+        "CAA" : "Q", "CAG" : "Q",
+        "CGU" : "R", "CGC" : "R", "CGA" : "R", "CGG" : "R", "AGA" : "R", "AGG" : "R",
+        "UCU" : "S", "UCC" : "S", "UCA" : "S", "UCG" : "S", "AGU" : "S", "AGC" : "S", 
+        "ACU" : "T", "ACC" : "T", "ACA" : "T", "ACG" : "T",
+        "GUU" : "V", "GUC" : "V", "GUA" : "V", "GUG" : "V",
+        "UGG" : "W", 
+        "UAU" : "Y", "UAC" : "Y", 
+    }
+    stop_codon = ["UAA", "UAG", "UGA"]
+    
+    aa_seq = []     # stores cooresponding amino acids that forms the protein
+    for i in range(0, len(mrna), 3): 
+        # get codon to translate
+        rna_codon = mrna[i:i+3]
+        # if stop codon is found, end the translation
+        if rna_codon in stop_codon: 
+            break
+        # translate codon to amino acid
+        aa_seq.append(rna_codon_mapping[rna_codon])
+        
+    # return a string of the protein (amino acid sequence)
+    protein = "".join(aa_seq)
+    return protein
+
 if __name__ == "__main__":
     print(count_dna("rosalind_dna.txt"))
     print(transcribe_to_mrna("rosalind_rna.txt"))
@@ -220,3 +270,7 @@ if __name__ == "__main__":
     gc_content("rosalind_gc.txt")
     print(pt_mutations("rosalind_hamm.txt"))
     print(mendels_first_law("rosalind_iprb.txt"))
+    
+    # write protein translation of mrna into a file
+    protein = translate_to_protein("rosalind_prot.txt")
+    open("protein_result.txt", "w").write(protein)
